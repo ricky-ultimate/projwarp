@@ -59,6 +59,16 @@ pub fn handle_action(args: crate::cli::Cli) -> Result<()> {
                 println!("Alias '{}' not found", alias.red());
             }
         }
+
+        Command::Rename { old, new } => {
+            if let Some(path) = cfg.projects.remove(&old) {
+                cfg.projects.insert(new.clone(), path);
+                cfg.save();
+                println!("Renamed '{}' → '{}'", old.yellow(), new.green());
+            } else {
+                println!("Alias '{}' not found", old.red());
+            }
+        }
     }
 
     Ok(())
