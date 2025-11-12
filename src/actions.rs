@@ -50,6 +50,15 @@ pub fn handle_action(args: crate::cli::Cli) -> Result<()> {
                 eprintln!("No match found for '{}'", name.red());
             }
         }
+
+        Command::Remove { alias } => {
+            if cfg.projects.remove(&alias).is_some() {
+                cfg.save();
+                println!("Removed alias '{}'", alias.green());
+            } else {
+                println!("Alias '{}' not found", alias.red());
+            }
+        }
     }
 
     Ok(())
