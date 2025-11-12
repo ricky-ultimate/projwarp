@@ -4,14 +4,8 @@ FROM rust:1.85
 # Create app directory
 WORKDIR /usr/src/projwarp
 
-# Copy Cargo manifests
-COPY Cargo.toml Cargo.lock ./
-
-# Pre-download dependencies
+COPY . .
 RUN cargo fetch
-
-# Copy source code
-COPY src ./src
 
 # Build the project in release mode
 RUN cargo build --release
