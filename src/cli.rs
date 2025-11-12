@@ -17,8 +17,10 @@ pub enum Command {
         #[arg(short, long)]
         alias: Option<String>,
     },
+
     /// List all known projects
     List,
+
     /// Jump to a project directory (prints path to stdout)
     Go {
         name: String,
@@ -26,4 +28,7 @@ pub enum Command {
         #[arg(long)]
         code: bool,
     },
+
+    /// Remove a project alias
+    Remove { alias: String },
 }
