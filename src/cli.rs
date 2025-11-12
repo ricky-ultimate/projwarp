@@ -31,4 +31,10 @@ pub enum Command {
 
     /// Remove a project alias
     Remove { alias: String },
+
+    /// Rename an existing alias
+    Rename {
+        old: String,
+        new: String,
+    },
 }
