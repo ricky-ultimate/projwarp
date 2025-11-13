@@ -1,4 +1,4 @@
-use crate::{cli::Command, config::Config, fuzzy::find_match};
+use crate::{cli::Command, config::Config, fuzzy::find_match, installer};
 use anyhow::Result;
 use colored::*;
 use std::env;
@@ -25,8 +25,13 @@ pub fn handle_action(args: crate::cli::Cli) -> Result<()> {
         }
 
         Command::List => {
-            for (alias, path) in &cfg.projects {
-                println!("{} → {}", alias.yellow(), path);
+            if cfg.projects.is_empty() {
+                println!("{}", "No projects registered yet!".yellow());
+                println!("Run 'proj add' in a project directory to get started");
+            } else {
+                for (alias, path) in &cfg.projects {
+                    println!("{} → {}", alias.yellow(), path);
+                }
             }
         }
 
@@ -68,6 +73,14 @@ pub fn handle_action(args: crate::cli::Cli) -> Result<()> {
             } else {
                 println!("Alias '{}' not found", old.red());
             }
+        }
+
+        Command::Install => {
+            installer::install()?;
+        }
+
+        Command::Uninstall => {
+            installer::uninstall()?;
         }
     }
 
