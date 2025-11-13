@@ -12,173 +12,52 @@ A blazingly fast CLI tool to jump between your projects instantly. No more `cd`-
 
 ## Installation
 
-### Automatic Installation (Recommended)
+### Quick Install
 
-The easiest way to install projwarp is to build it and run the installer:
+Choose your preferred package manager:
 
 ```bash
-# Clone and build
-git clone https://github.com/yourusername/projwarp.git
+# Cargo (Cross-platform)
+cargo install projwarp
+
+# Chocolatey (Windows)
+choco install projwarp
+
+```
+
+### Build from Source
+
+```bash
+git clone https://github.com/ricky-ultimate/projwarp.git
 cd projwarp
 cargo build --release
 
-# Run the built-in installer
+# Run built-in installer
 ./target/release/projwarp install
-
-# Or on Windows
-.\target\release\projwarp.exe install
 ```
 
-The installer will:
-- Copy the binary to the right location
-- Add it to your PATH
-- Setup the `proj` function in your shell profile
-- Configure everything automatically
+The installer automatically:
+- Installs the binary
+- Adds to PATH
+- Configures shell integration
+- Sets up UTF-8 encoding
 
-**Alternative: PowerShell Script (Windows)**
+---
 
-You can also use the PowerShell installer script:
+### Manual Installation
 
+**Windows:**
 ```powershell
 # After building with cargo
 .\install.ps1
 ```
 
-### Manual Installation
-
-If you prefer manual installation:
-
-**Windows:**
-```powershell
-# Copy binary to local app data
-$installDir = "$env:LOCALAPPDATA\projwarp"
-New-Item -ItemType Directory -Path $installDir -Force
-Copy-Item "target\release\projwarp.exe" "$installDir\"
-
-# Add to PATH
-$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
-[Environment]::SetEnvironmentVariable("Path", "$userPath;$installDir", "User")
-```
-
-**Unix (Linux/macOS):**
+**Unix:**
 ```bash
-# Copy binary to local bin
-mkdir -p ~/.local/bin
+# Copy to local bin
 cp target/release/projwarp ~/.local/bin/
 chmod +x ~/.local/bin/projwarp
-
-# Add to PATH (if not already)
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc  # or ~/.zshrc
 ```
-
-### Manual PowerShell Setup (Windows)
-
-Add this function to your PowerShell profile (`$PROFILE`):
-
-```powershell
-function proj {
-    param(
-        [Parameter(Position = 0)]
-        [string]$name,
-        [Parameter(Position = 1)]
-        [string]$secondArg,
-        [Parameter(Position = 2)]
-        [string]$thirdArg,
-        [switch]$code,
-        [string]$alias
-    )
-
-    $previousOutputEncoding = [Console]::OutputEncoding
-    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-
-    try {
-        if (-not $name) {
-            Write-Host "Usage:" -ForegroundColor Cyan
-            Write-Host "  proj add [-alias <n>]         Add current directory"
-            Write-Host "  proj remove <alias>           Remove a project alias"
-            Write-Host "  proj rename <old> <new>       Rename a project alias"
-            Write-Host "  proj list                     List all projects"
-            Write-Host "  proj <n> [-code]              Jump to project or open in VS Code"
-            return
-        }
-
-        if ($name -eq "add") {
-            if ($alias) {
-                & projwarp add --alias $alias
-            } else {
-                & projwarp add
-            }
-            return
-        }
-
-        if ($name -eq "remove" -or $name -eq "rm") {
-            if ($secondArg) {
-                & projwarp remove $secondArg
-            } elseif ($alias) {
-                & projwarp remove $alias
-            } else {
-                Write-Host "Usage: proj remove <alias>" -ForegroundColor Yellow
-            }
-            return
-        }
-
-        if ($name -eq "rename" -or $name -eq "mv") {
-            if ($thirdArg) {
-                & projwarp rename $secondArg $thirdArg
-            } elseif ($secondArg -and $alias) {
-                & projwarp rename $secondArg $alias
-            } else {
-                Write-Host "Usage: proj rename <old> <new>" -ForegroundColor Yellow
-            }
-            return
-        }
-
-        if ($name -eq "list") {
-            & projwarp list
-            return
-        }
-
-        if ($code) {
-            $output = & projwarp go $name 2>&1 | Out-String
-            $output = $output.Trim()
-
-            if ($output -and $output -notmatch "No match found") {
-                if (Test-Path $output) {
-                    & code $output
-                    Write-Host "Opening '$output' in VS Code..." -ForegroundColor Green
-                } else {
-                    Write-Host "Path exists in config but not on disk: $output" -ForegroundColor Yellow
-                }
-            } else {
-                Write-Host "Project '$name' not found." -ForegroundColor Red
-            }
-        } else {
-            $output = & projwarp go $name 2>&1 | Out-String
-            $output = $output.Trim()
-
-            if ($output -and $output -notmatch "No match found") {
-                if (Test-Path $output) {
-                    Set-Location $output
-                    Write-Host "Jumped to: $output" -ForegroundColor Green
-                } else {
-                    Write-Host "Path exists in config but not on disk: $output" -ForegroundColor Yellow
-                }
-            } else {
-                Write-Host "Project '$name' not found." -ForegroundColor Red
-            }
-        }
-    } finally {
-        [Console]::OutputEncoding = $previousOutputEncoding
-    }
-}
-```
-
-Reload your profile:
-```powershell
-. $PROFILE
-```
-
-### Bash/Zsh Setup (Unix)
 
 Add this to your `.bashrc` or `.zshrc`:
 
@@ -205,6 +84,20 @@ proj() {
     fi
 }
 ```
+
+## Uninstallation
+
+To uninstall projwarp:
+
+```bash
+# Using built-in uninstaller
+projwarp uninstall
+
+# Or using PowerShell script (Windows)
+.\install.ps1 -Uninstall
+```
+
+This will remove the binary, PATH entries, and optionally the configuration file.
 
 ## Usage
 
