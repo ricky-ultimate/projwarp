@@ -2,7 +2,6 @@ use anyhow::{Context, Result};
 use colored::*;
 use std::env;
 use std::fs;
-use std::io::{self, Write};
 use std::path::PathBuf;
 
 const PROJ_FUNCTION: &str = r#"
