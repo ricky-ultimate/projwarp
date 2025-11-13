@@ -12,19 +12,66 @@ A blazingly fast CLI tool to jump between your projects instantly. No more `cd`-
 
 ## Installation
 
-### From Source
+### Automatic Installation (Recommended)
+
+The easiest way to install projwarp is to build it and run the installer:
 
 ```bash
-git clone https://github.com/ricky-ultimate/projwarp.git
+# Clone and build
+git clone https://github.com/yourusername/projwarp.git
 cd projwarp
 cargo build --release
+
+# Run the built-in installer
+./target/release/projwarp install
+
+# Or on Windows
+.\target\release\projwarp.exe install
 ```
 
-Add the binary to your PATH:
-- **Windows**: Copy `target/release/projwarp.exe` to a folder in your PATH
-- **Unix**: Copy `target/release/projwarp` to `/usr/local/bin/` or `~/.local/bin/`
+The installer will:
+- Copy the binary to the right location
+- Add it to your PATH
+- Setup the `proj` function in your shell profile
+- Configure everything automatically
 
-### PowerShell Setup (Windows)
+**Alternative: PowerShell Script (Windows)**
+
+You can also use the PowerShell installer script:
+
+```powershell
+# After building with cargo
+.\install.ps1
+```
+
+### Manual Installation
+
+If you prefer manual installation:
+
+**Windows:**
+```powershell
+# Copy binary to local app data
+$installDir = "$env:LOCALAPPDATA\projwarp"
+New-Item -ItemType Directory -Path $installDir -Force
+Copy-Item "target\release\projwarp.exe" "$installDir\"
+
+# Add to PATH
+$userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+[Environment]::SetEnvironmentVariable("Path", "$userPath;$installDir", "User")
+```
+
+**Unix (Linux/macOS):**
+```bash
+# Copy binary to local bin
+mkdir -p ~/.local/bin
+cp target/release/projwarp ~/.local/bin/
+chmod +x ~/.local/bin/projwarp
+
+# Add to PATH (if not already)
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc  # or ~/.zshrc
+```
+
+### Manual PowerShell Setup (Windows)
 
 Add this function to your PowerShell profile (`$PROFILE`):
 
@@ -204,7 +251,7 @@ proj rename oldname newname
 proj mv oldname newname     # Short alias
 ```
 
-## 🔍 Fuzzy Matching
+## Fuzzy Matching
 
 projwarp uses fuzzy matching, so you don't need to type the exact alias:
 
@@ -229,7 +276,7 @@ Projects are stored in `~/.projwarp.json`:
 
 You can manually edit this file if needed.
 
-## 🛠️ Building from Source
+## Building from Source
 
 Requirements:
 - Rust 1.70+ (edition 2021)
