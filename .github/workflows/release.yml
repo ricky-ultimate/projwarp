@@ -43,9 +43,10 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           $NAME = "projwarp-${{ github.ref_name }}-${{ matrix.target }}"
-          mkdir $NAME
-          cp "target/${{ matrix.target }}/release/projwarp.exe" "$NAME/"
-          cp README.md LICENSE "$NAME/"
+          New-Item -ItemType Directory -Path $NAME -Force | Out-Null
+          Copy-Item "target/${{ matrix.target }}/release/projwarp.exe" -Destination "$NAME/"
+          Copy-Item "README.md" -Destination "$NAME/"
+          Copy-Item "LICENSE" -Destination "$NAME/"
           Compress-Archive -Path $NAME -DestinationPath "$NAME.zip"
           echo "ASSET=$NAME.zip" >> $env:GITHUB_ENV
 
