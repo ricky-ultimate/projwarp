@@ -104,9 +104,8 @@ function proj {
 "#;
 
 pub fn install() -> Result<()> {
-    println!("{}", "🚀 Installing projwarp...".cyan());
+    println!("{}", "Installing projwarp...".cyan());
 
-    // Get the current executable path
     let exe_path = env::current_exe().context("Failed to get executable path")?;
 
     #[cfg(target_os = "windows")]
@@ -134,16 +133,13 @@ pub fn install() -> Result<()> {
 fn install_windows(exe_path: &PathBuf) -> Result<()> {
     use std::process::Command;
 
-    // Install directory
     let local_app_data = env::var("LOCALAPPDATA").context("LOCALAPPDATA not found")?;
     let install_dir = PathBuf::from(local_app_data).join("projwarp");
     let target_path = install_dir.join("projwarp.exe");
 
-    // Create directory
     fs::create_dir_all(&install_dir).context("Failed to create install directory")?;
     println!("{} Created installation directory", "✓".green());
 
-    // Copy binary
     fs::copy(exe_path, &target_path).context("Failed to copy binary")?;
     println!(
         "{} Installed binary to: {}",
@@ -151,7 +147,6 @@ fn install_windows(exe_path: &PathBuf) -> Result<()> {
         target_path.display()
     );
 
-    // Add to PATH (requires admin or user PATH modification)
     let ps_script = format!(
         r#"
         $installDir = '{}'
@@ -171,7 +166,6 @@ fn install_windows(exe_path: &PathBuf) -> Result<()> {
         .status()
         .context("Failed to update PATH")?;
 
-    // Setup PowerShell profile
     setup_powershell_profile()?;
 
     Ok(())
@@ -183,14 +177,11 @@ fn install_unix(exe_path: &PathBuf) -> Result<()> {
     let install_dir = PathBuf::from(&home).join(".local").join("bin");
     let target_path = install_dir.join("projwarp");
 
-    // Create directory
     fs::create_dir_all(&install_dir).context("Failed to create install directory")?;
     println!("{} Created installation directory", "✓".green());
 
-    // Copy binary
     fs::copy(exe_path, &target_path).context("Failed to copy binary")?;
 
-    // Make executable
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
@@ -205,7 +196,6 @@ fn install_unix(exe_path: &PathBuf) -> Result<()> {
         target_path.display()
     );
 
-    // Setup shell profile
     setup_unix_profile(&home)?;
 
     Ok(())
@@ -274,7 +264,6 @@ proj() {
 }
 "#;
 
-    // Try .bashrc first
     if bashrc.exists() {
         let content = fs::read_to_string(&bashrc)?;
         if !content.contains("function proj") {
@@ -283,7 +272,6 @@ proj() {
         }
     }
 
-    // Then try .zshrc
     if zshrc.exists() {
         let content = fs::read_to_string(&zshrc)?;
         if !content.contains("proj()") {
@@ -319,7 +307,6 @@ fn uninstall_windows() -> Result<()> {
     let local_app_data = env::var("LOCALAPPDATA").context("LOCALAPPDATA not found")?;
     let install_dir = PathBuf::from(local_app_data).join("projwarp");
 
-    // Remove binary
     if install_dir.exists() {
         fs::remove_dir_all(&install_dir)?;
         println!("{} Removed installation directory", "✓".green());
