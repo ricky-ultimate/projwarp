@@ -33,8 +33,11 @@ pub enum Command {
     Remove { alias: String },
 
     /// Rename an existing alias
-    Rename {
-        old: String,
-        new: String,
-    },
+    Rename { old: String, new: String },
+
+    /// Install projwarp and setup shell integration
+    Install,
+
+    /// Uninstall projwarp
+    Uninstall,
 }
