@@ -2,7 +2,7 @@
 name = "projwarp"
 version = "0.1.0"
 edition = "2024"
-authors = ["リッキー <ricky-ultimate.dev@example.com>"]
+authors = ["リッキー <ricky-ultimate.dev@gmail.com>"]
 description = "Jump to your projects instantly with fuzzy matching"
 readme = "README.md"
 homepage = "https://github.com/ricky-ultimate/projwarp"

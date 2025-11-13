@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>projwarp</id>
+    <version>0.1.0</version>
+    <packageSourceUrl>https://github.com/ricky-ultimate/projwarp</packageSourceUrl>
+    <owners>ricky-ultimate</owners>
+    <title>ProjWarp</title>
+    <authors>リッキー</authors>
+    <projectUrl>https://github.com/ricky-ultimate/projwarp</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/ricky-ultimate/projwarp/master/assets/icon.png</iconUrl>
+    <copyright>2025 リッキー</copyright>
+    <licenseUrl>https://github.com/ricky-ultimate/projwarp/blob/master/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/ricky-ultimate/projwarp</projectSourceUrl>
+    <docsUrl>https://github.com/ricky-ultimate/projwarp#readme</docsUrl>
+    <bugTrackerUrl>https://github.com/ricky-ultimate/projwarp/issues</bugTrackerUrl>
+    <tags>cli productivity project navigation rust developer-tools</tags>
+    <summary>Jump to your projects instantly with fuzzy matching</summary>
+    <description>
+projwarp is a blazingly fast CLI tool to navigate between your projects instantly.
+
+Features:
+- Lightning fast fuzzy matching
+- Simple commands, maximum productivity
+- VS Code integration
+- Auto-generated aliases
+- Cross-platform support
+
+Navigate to any project with just: proj &lt;name&gt;
+    </description>
+    <releaseNotes>https://github.com/ricky-ultimate/projwarp/releases</releaseNotes>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>
