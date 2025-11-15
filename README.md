@@ -14,94 +14,174 @@ A blazingly fast CLI tool to jump between your projects instantly. No more `cd`-
 - **VS Code Integration**: Open projects directly in your editor
 - **Cross-Platform**: Works on Windows, macOS, and Linux
 
-## Installation
+# Installation Guide
 
-### Quick Install
+## Windows Installation
 
-Choose your preferred package manager:
+### Method 1: Quick Install (One Command)
 
-```bash
-# Cargo (Cross-platform)
-cargo install projwarp
+Open Terminal and run:
 
-# Chocolatey (Windows)
-choco install projwarp
-
+```powershell
+irm https://raw.githubusercontent.com/ricky-ultimate/projwarp/master/quick-install.ps1 | iex
 ```
 
-### Build from Source
+**Note:** If you get an error about execution policy, run Terminal as Administrator first, or use Method 2.
+
+---
+
+### Method 2: Manual Installation (Recommended for First-Time Users)
+
+#### Step 1: Download
+Go to [GitHub Releases](https://github.com/ricky-ultimate/projwarp/releases/latest) and download:
+- `projwarp-vX.X.X-x86_64-pc-windows-msvc.zip`
+
+#### Step 2: Extract
+Right-click the ZIP file → **Extract All** → Choose a location (e.g., `Downloads\projwarp`)
+
+#### Step 3: Install
+Open Terminal in the extracted folder (Shift + Right-click → "Open Terminal window here") and run:
+
+```powershell
+# Unblock the script (important!)
+Unblock-File -Path .\install.ps1
+
+# Run the installer
+.\install.ps1
+```
+
+**If you get an execution policy error:**
+```powershell
+# Option A: Run with bypass
+powershell -ExecutionPolicy Bypass -File .\install.ps1
+
+# Option B: Allow scripts for your user (one-time setup)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+.\install.ps1
+```
+
+#### Step 4: Restart Terminal
+Close and reopen Terminal to load the new configuration.
+
+---
+
+### Method 3: Chocolatey (Package Manager)
+
+```powershell
+choco install projwarp
+```
+
+---
+
+## macOS/Linux Installation
+
+### Using Pre-built Binary
+
+1. Download the appropriate release:
+   - **macOS (Intel):** `projwarp-vX.X.X-x86_64-apple-darwin.tar.gz`
+   - **macOS (Apple Silicon):** `projwarp-vX.X.X-aarch64-apple-darwin.tar.gz`
+   - **Linux:** `projwarp-vX.X.X-x86_64-unknown-linux-gnu.tar.gz`
+
+2. Extract and install:
+   ```bash
+   tar -xzf projwarp-*.tar.gz
+   cd projwarp-*/
+   chmod +x projwarp
+   sudo mv projwarp /usr/local/bin/
+   ```
+
+3. Add shell function to your profile (`~/.bashrc` or `~/.zshrc`):
+   ```bash
+   # projwarp - Project navigation tool
+   proj() {
+       if [ "$1" = "add" ]; then
+           projwarp add "${@:2}"
+       elif [ "$1" = "list" ]; then
+           projwarp list
+       elif [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
+           projwarp remove "$2"
+       elif [ "$1" = "rename" ] || [ "$1" = "mv" ]; then
+           projwarp rename "$2" "$3"
+       elif [ "$2" = "--code" ]; then
+           projwarp go "$1" --code
+       else
+           local output=$(projwarp go "$1" 2>&1)
+           if [ $? -eq 0 ]; then
+               cd "$output"
+               echo "Jumped to: $output"
+           else
+               echo "$output"
+           fi
+       fi
+   }
+   ```
+
+4. Reload your shell:
+   ```bash
+   source ~/.bashrc  # or source ~/.zshrc
+   ```
+
+---
+
+## Installation from Source (Developers)
+
+If you have Rust installed:
 
 ```bash
+# Install from crates.io
+cargo install projwarp
+
+# Or build from source
 git clone https://github.com/ricky-ultimate/projwarp.git
 cd projwarp
 cargo build --release
 
-# Run built-in installer
+# On Windows
+.\target\release\projwarp.exe install
+
+# On macOS/Linux
 ./target/release/projwarp install
 ```
 
-The installer automatically:
-- Installs the binary
-- Adds to PATH
-- Configures shell integration
-- Sets up UTF-8 encoding
+---
+
+## Verification
+
+After installation, verify everything works:
+
+```powershell
+# Check binary is accessible
+projwarp --version
+
+# Check shell function
+proj
+
+# Should show usage information
+```
 
 ---
 
-### Manual Installation
-
-**Windows:**
-```powershell
-# After building with cargo
-.\install.ps1
-```
-
-**Unix:**
-```bash
-# Copy to local bin
-cp target/release/projwarp ~/.local/bin/
-chmod +x ~/.local/bin/projwarp
-```
-
-Add this to your `.bashrc` or `.zshrc`:
-
-```bash
-proj() {
-    if [ "$1" = "add" ]; then
-        projwarp add "${@:2}"
-    elif [ "$1" = "list" ]; then
-        projwarp list
-    elif [ "$1" = "remove" ] || [ "$1" = "rm" ]; then
-        projwarp remove "$2"
-    elif [ "$1" = "rename" ] || [ "$1" = "mv" ]; then
-        projwarp rename "$2" "$3"
-    elif [ "$2" = "--code" ]; then
-        projwarp go "$1" --code
-    else
-        local output=$(projwarp go "$1" 2>&1)
-        if [ $? -eq 0 ]; then
-            cd "$output"
-            echo "Jumped to: $output"
-        else
-            echo "$output"
-        fi
-    fi
-}
-```
-
 ## Uninstallation
 
-To uninstall projwarp:
+### Windows
+```powershell
+# If installed via Chocolatey
+choco uninstall projwarp
 
-```bash
-# Using built-in uninstaller
+# If installed manually
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -Uninstall
+
+# Or run the uninstaller from anywhere
 projwarp uninstall
-
-# Or using PowerShell script (Windows)
-.\install.ps1 -Uninstall
 ```
 
-This will remove the binary, PATH entries, and optionally the configuration file.
+### macOS/Linux
+```bash
+sudo rm /usr/local/bin/projwarp
+# Manually remove the proj() function from ~/.bashrc or ~/.zshrc
+```
+
+---
 
 ## Usage
 
