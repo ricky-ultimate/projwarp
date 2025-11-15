@@ -50,6 +50,11 @@ jobs:
           Compress-Archive -Path $NAME -DestinationPath "$NAME.zip"
           echo "ASSET=$NAME.zip" >> $env:GITHUB_ENV
 
+          # Calculate SHA256
+          $hash = (Get-FileHash -Path "$NAME.zip" -Algorithm SHA256).Hash
+          echo "SHA256=$hash" >> $env:GITHUB_ENV
+          echo "Windows SHA256: $hash"
+
       - name: Create archive (Unix)
         if: matrix.os != 'windows-latest'
         run: |
@@ -83,4 +88,54 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - name: Publish to crates.io
         run: cargo publish --token ${{ secrets.CARGO_TOKEN }}
+        continue-on-error: true
+
+  publish-chocolatey:
+    name: Publish to Chocolatey
+    runs-on: windows-latest
+    needs: build
+    if: github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[skip-choco]')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Windows artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: x86_64-pc-windows-msvc
+          path: ./artifacts
+
+      - name: Get release info
+        id: release_info
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart('v')
+          echo "VERSION=$version" >> $env:GITHUB_ENV
+
+          $zipFile = Get-ChildItem -Path ./artifacts -Filter "*.zip" | Select-Object -First 1
+          $hash = (Get-FileHash -Path $zipFile.FullName -Algorithm SHA256).Hash
+          echo "SHA256=$hash" >> $env:GITHUB_ENV
+          echo "Chocolatey SHA256: $hash"
+
+      - name: Update nuspec
+        run: |
+          $nuspec = Get-Content "choco/projwarp.nuspec" -Raw
+          $nuspec = $nuspec -replace '<version>.*?</version>', "<version>${{ env.VERSION }}</version>"
+          Set-Content "choco/projwarp.nuspec" $nuspec
+
+      - name: Update chocolateyinstall.ps1
+        run: |
+          $install = Get-Content "choco/tools/chocolateyinstall.ps1" -Raw
+          $install = $install -replace "v\d+\.\d+\.\d+", "${{ github.ref_name }}"
+          $install = $install -replace "checksum64\s*=\s*'[^']*'", "checksum64    = '${{ env.SHA256 }}'"
+          Set-Content "choco/tools/chocolateyinstall.ps1" $install
+
+      - name: Pack Chocolatey package
+        run: |
+          cd choco
+          choco pack
+
+      - name: Push to Chocolatey
+        run: |
+          cd choco
+          choco apikey --key ${{ secrets.CHOCOLATEY_API_KEY }} --source https://push.chocolatey.org/
+          choco push projwarp.${{ env.VERSION }}.nupkg --source https://push.chocolatey.org/
         continue-on-error: true
