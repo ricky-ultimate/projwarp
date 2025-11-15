@@ -5,8 +5,23 @@
     Installs projwarp CLI tool and configures PowerShell profile
 .DESCRIPTION
     This script installs the projwarp binary and adds the proj wrapper function to your PowerShell profile
-#>
 
+.PARAMETER Uninstall
+    Uninstalls projwarp and removes shell integration
+
+.NOTES
+    If you get an execution policy error, run:
+    Unblock-File -Path .\install.ps1
+    Or: powershell -ExecutionPolicy Bypass -File .\install.ps1
+
+.EXAMPLE
+    .\install.ps1
+    Installs projwarp
+
+.EXAMPLE
+    .\install.ps1 -Uninstall
+    Uninstalls projwarp
+#>
 param(
     [switch]$Uninstall
 )
