@@ -1,5 +1,9 @@
 # projwarp
 
+[![Crates.io](https://img.shields.io/crates/v/projwarp.svg)](https://crates.io/crates/projwarp)
+[![Chocolatey](https://img.shields.io/chocolatey/v/projwarp.svg)](https://community.chocolatey.org/packages/projwarp)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A blazingly fast CLI tool to jump between your projects instantly. No more `cd`-ing through endless directories!
 
 ## Features
